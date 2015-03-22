@@ -31,6 +31,62 @@
 <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
+
+  <script type="text/javascript">
+    (function() {
+      var s = document.createElement('script');
+      s.src = 'http://s.hatena.ne.jp/js/HatenaStar.js';
+      s.async = true;
+      s.onload = function () {
+        (function() {
+          var base = Hatena.Star.EntryLoader.getElementByConfigSelector;
+          Hatena.Star.EntryLoader.getElementByConfigSelector = function(selector, parent) {
+            var links, n, i, link, a;
+            if (selector == 'link[rel="canonical"]') {
+              links = document.getElementsByTagName('link');
+              for (i = 0, n = links.length; i < n; ++i) {
+                link = links[i];
+                if (link.rel == 'canonical') {
+                  a = document.createElement('a');
+                  a.setAttribute('href', link.href);
+                  return a.cloneNode(false);
+                }
+              }
+            }
+            else {
+              return base(selector, parent);
+            }
+            return null;
+          };
+        })();
+        Hatena.Star.Token = '98c1fc6157903ae00745366577f6edb0aa77fc94';
+        Hatena.Star.SiteConfig = {
+          entryNodes: {
+            '#content article': {
+              
+                uri: '.entry-title a',
+              
+              title: '.entry-title',
+              container: '.meta'
+            }
+          }
+        };
+      };
+      document.getElementsByTagName('head')[0].appendChild(s);
+    }());
+  </script>
+
+
+
+<!--open link with target blank-->
+<script language="JavaScript">
+$(document).ready( function () {
+   $("a[href^='http']:not([href*='" + location.hostname + "'])").attr('target', '_blank');
+})
+</script>
+
+
+
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -50,8 +106,6 @@
 <body   >
   <header role="banner"><hgroup>
   <h1><a href="/">ysydt.net for tech memo</a></h1>
-  
-    <h2>test</h2>
   
 </hgroup>
 
@@ -84,7 +138,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/03/20/testtesttest/">テック用備忘録ブログ始めます</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/03/20/test/">Test</a></h1>
     
     
       <p class="meta">
@@ -107,7 +161,7 @@
   
   
     <footer>
-      <a rel="full-article" href="/blog/2015/03/20/testtesttest/">続きを読む</a>
+      <a rel="full-article" href="/blog/2015/03/20/test/">続きを読む</a>
     </footer>
   
 
@@ -157,12 +211,56 @@
 </div>
 <aside class="sidebar">
   
-    <section>
+    
+<section>
+  <h1>About Me</h1>
+  <div id="twitter-profile" style="margin-top:0.5em;">
+    <p>
+      <strong>Yuta Yoshida</strong> 
+      (<a href="http://twitter.com/yutatatatata">@yutatatatata</a>)
+    </p>
+
+    <img src="http://ysdyt.net/wp-content/uploads/2013/06/prof-e1370106403193.png" alt="profile pic" style="margin: 0px 0px 0px 0px" ;>
+
+    <p>計算機生物学（Bioinformatics）専攻の学生。Ruby王国島根県松江市を愛する。ミドリムシからバイオ燃料を作るための遺伝子解析研究をしてます。生命科学とITとfablicationと地域コミュニティーで楽しい事が出来ないか模索中。まちづくり, ライフサイエンス, 自治体ICT, オープンデータ, オープンガバメントネタを中心に書いています(ﾟ∀ﾟ)メインブログは<a href="http://ysdyt.net">ysdyt.net</a></p>
+    
+    <p></p>
+  </div>
+
+  <script type="text/javascript">
+    $(function(){
+        var container = $('#twitter-profile'),
+            user = "yutatatatata";
+        
+        function parseTwLinks(s) {
+          var twUrl = "http://www.twitter.com/"
+          s = s.replace(/ (@([\w]+))/g, function(match, p1, p2) {
+              return " <a href='"+twUrl+p2+"'>"+p1+"</a>"
+          }).replace(/ (#([\w]+))/g, function(match, p1, p2) {
+              return " <a href='"+twUrl+"#!/search?q=%23"+p2+"'>"+p1+"</a>"
+          })
+          return s
+        }
+
+        $.ajax({
+            url: "http://api.twitter.com/1/users/show.json?include_entities=false&screen_name="+user+"&callback=?"
+          , type: 'GET'
+          , dataType: 'jsonp'
+          , error: function (err) { $('#twitter-profile').addClass('error');  }
+          , success: function(data) {
+              container.html('<img class="left" src="http://api.twitter.com/1/users/profile_image/'+user+'.json?size=bigger" alt="@'+user+'"><p><strong>'+data.name+'</strong> (<a href="http://twitter.com/'+user+'">@'+user+'</a>)<br/>'+data.location+'</p><p>'+parseTwLinks(data.description)+'</p>');
+            }
+        })
+      });
+  </script>
+</section>
+
+<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2015/03/20/testtesttest/">テック用備忘録ブログ始めます</a>
+        <a href="/blog/2015/03/20/test/">Test</a>
       </li>
     
       <li class="post">
@@ -171,10 +269,16 @@
     
   </ul>
 </section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/test/'>test (1)</a></li></ul>
+</section>
 
 
 
 
+<a class="twitter-timeline" href="https://twitter.com/yutatatatata" data-widget-id="578629067915669505">@yutatatatataさんのツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
   
 </aside>
