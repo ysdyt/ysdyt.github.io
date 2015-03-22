@@ -4,7 +4,7 @@
   <title><![CDATA[ysydt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-22T16:58:59+09:00</updated>
+  <updated>2015-03-22T17:03:56+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -14,20 +14,19 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Test2]]></title>
-    <link href="http://ysdyt.github.io/blog/2015/03/22/test2/"/>
-    <updated>2015-03-22T16:33:12+09:00</updated>
-    <id>http://ysdyt.github.io/blog/2015/03/22/test2</id>
-    <content type="html"><![CDATA[<p>this is test page</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Test]]></title>
-    <link href="http://ysdyt.github.io/blog/2015/03/22/test/"/>
-    <updated>2015-03-22T16:03:41+09:00</updated>
-    <id>http://ysdyt.github.io/blog/2015/03/22/test</id>
-    <content type="html"><![CDATA[<p>hello world</p>
+    <title type="html"><![CDATA[テック用備忘録ブログ始めます]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/03/20/testtesttest/"/>
+    <updated>2015-03-20T00:45:49+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/03/20/testtesttest</id>
+    <content type="html"><![CDATA[<p>本家ブログ <a href="http://ysdyt.net">ysdyt.net</a>において、
+地方ネタ、生命科学、技術ネタ等々、話題がごっちゃになってきたので、技術ネタのみを切り離して書き残しておくブログを作った。こっちのほうが見やすそうだし、Github Pagesも作ってみたかったので。</p>
+
+<!-- more -->
+
+
+<p>こちらのブログには主に、趣味でいろいろ触っているRasberry Piのことや、これから仕事で携わるであろうデータ解析分野のことなどを書いていきたいと思う。</p>
+
+<p>ということで投稿テスト兼ねて。</p>
 ]]></content>
   </entry>
   
