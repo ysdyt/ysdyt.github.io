@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[ysydt.net for tech memo]]></title>
+  <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
+  <link href="http://ysdyt.github.io/"/>
+  <updated>2015-03-22T15:58:25+09:00</updated>
+  <id>http://ysdyt.github.io/</id>
+  <author>
+    <name><![CDATA[Yuta Yoshida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[テック用備忘録ブログ始めます]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/03/20/start-new-blog/"/>
+    <updated>2015-03-20T00:45:49+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/03/20/start-new-blog</id>
+    <content type="html"><![CDATA[<p>本家ブログ <a href="http://ysdyt.net">ysdyt.net</a>において、
+地方ネタ、生命科学、技術ネタ等々、話題がごっちゃになってきたので、技術ネタのみを切り離して書き残しておくブログを作った。こっちのほうが見やすそうだし、Github Pagesも作ってみたかったので。</p>
+
+<!-- more -->
+
+
+<p>こちらのブログには主に、趣味でいろいろ触っているRasberry Piのことや、これから仕事で携わるであろうデータ解析分野のことなどを書いていきたいと思う。</p>
+
+<p>ということで投稿テスト兼ねて。</p>
+]]></content>
+  </entry>
+  
+</feed>
