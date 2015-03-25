@@ -9,8 +9,8 @@
   <meta name="author" content="Yuta Yoshida">
 
   
-  <meta name="description" content="test Octopressの初回設置について、基本的にはこちらの内容を参考にさせてもらったのだが、新しいエントリーを書いた後に 1
-$ bundle exec rake deploy しても新しい投稿が反映されず困っていた。deployしてもnew postが反映されない問題。ついでに &hellip;">
+  <meta name="description" content="Octopressの初回設置について、基本的にはこちらの内容を参考にさせてもらったのだが、新しいエントリーを書いた後に 1
+$ bundle exec rake deploy しても新しい投稿が反映されず困っていた。deployしてもnew postが反映されない問題。ついでに _config. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -154,9 +154,7 @@ $(document).ready( function () {
   </header>
 
 
-  <div class="entry-content"><p>test</p>
-
-<p>Octopressの初回設置について、基本的には<a href="http://blog.shiroyama.us/blog/2014/02/26/octopress/">こちら</a>の内容を参考にさせてもらったのだが、新しいエントリーを書いた後に</p>
+  <div class="entry-content"><p>Octopressの初回設置について、基本的には<a href="http://blog.shiroyama.us/blog/2014/02/26/octopress/">こちら</a>の内容を参考にさせてもらったのだが、新しいエントリーを書いた後に</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>bundle <span class="nb">exec </span>rake deploy
@@ -165,38 +163,12 @@ $(document).ready( function () {
 
 <p>しても新しい投稿が反映されず困っていた。deployしてもnew postが反映されない問題。ついでに _config.ymlに新たに書き込んだ内容も反映されない&hellip;</p>
 
-<p>解決策は</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake generate <span class="c"># convert to html</span>
-</span><span class='line'><span class="nv">$ </span>rake deploy   <span class="c"># publish (push to GitHub)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>つまり、rake deploy する前に、rake generateをする必要があるらしい。<br/>
-そしてこれらは</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake gen_deploy
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という一つのコマンドでまとめて行うこともできる。<br/>
-ただしこの場合は、rake generateで失敗した場合にもその状態でdeployされて、なんだか面倒なことになるらしいので自分は generateとdeployを分けて行っている。</p>
-
-<p>あと、<em>config.ymlが反映されない問題は、自分の場合は rake gen_deployを</em>config.ymlが置いてある階層で行うと上手く反映された（そして反映に少し時間がかかる場合があるのでちょっと待ってみる必要もあるかもしれない）<br/>
-とりあえず情報を更新する場合は、Octopressホームディレクトリ直下で gen_deploy すると間違いないのではないかと。</p>
-
-<p>なんだかよくわからないけど、とりあえずこれで上手くいってます。</p>
-
-<p>P.S<br/>
-deployではなく、rake previewしたときに上手くローカルに最新の内容が反映されない場合は、一度 rake previewを落として、再度 rake preview を実行すると上手く反映される。特に、サイドバーの情報変更や、_config.ymlの内容を変更してローカルで確認したい場合は、一度落として再度立ち上げないとうまく反映されないっぽい。</p>
-
-<p>&lt;参考><br/>
-・<a href="http://rcmdnk.github.io/blog/2013/03/07/setup-octopress/">GitHub pages + Octopressの導入</a></p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/03/25/octopress-memo/">続きを読む</a>
+    </footer>
   
 
 
