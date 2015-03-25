@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>New_page - ysdyt.net for tech memo</title>
+  <title>Octopress設定でつまずいたところメモ - ysdyt.net for tech memo</title>
   <meta name="author" content="Yuta Yoshida">
 
   
-  <meta name="description" content="New_page hello! Tweet About Me Yuta Yoshida (@yutatatatata) 計算機生物学（Bioinformatics）専攻の学生。Ruby王国島根県松江市を愛する。ミドリムシからバイオ燃料を作るための遺伝子解析研究をしてます。 &hellip;">
+  <meta name="description" content="test Octopressの初回設置について、基本的にはこちらの内容を参考にさせてもらったのだが、新しいエントリーを書いた後に 1
+$ bundle exec rake deploy しても新しい投稿が反映されず困っていた。deployしてもnew postが反映されない問題。ついでに &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ysdyt.github.io/new-page/">
+  <link rel="canonical" href="http://ysdyt.github.io/blog/2015/03/25/octopress-memo/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="ysdyt.net for tech memo" type="application/atom+xml">
@@ -63,7 +64,7 @@
           entryNodes: {
             '#content article': {
               
-                uri: '.entry-title a',
+                uri: 'link[rel="canonical"]',
               
               title: '.entry-title',
               container: '.meta'
@@ -130,20 +131,95 @@ $(document).ready( function () {
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">New_page</h1>
+    
+      <h1 class="entry-title">Octopress設定でつまずいたところメモ</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-03-25T18:38:30+09:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>25</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:38 pm</span></time>
+        
+      </p>
     
   </header>
-  
-  <p>hello!</p>
 
+
+<div class="entry-content"><p>test</p>
+
+<p>Octopressの初回設置について、基本的には<a href="http://blog.shiroyama.us/blog/2014/02/26/octopress/">こちら</a>の内容を参考にさせてもらったのだが、新しいエントリーを書いた後に</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>bundle <span class="nb">exec </span>rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>しても新しい投稿が反映されず困っていた。deployしてもnew postが反映されない問題。ついでに _config.ymlに新たに書き込んだ内容も反映されない&hellip;</p>
+
+<p>解決策は</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake generate <span class="c"># convert to html</span>
+</span><span class='line'><span class="nv">$ </span>rake deploy   <span class="c"># publish (push to GitHub)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>つまり、rake deploy する前に、rake generateをする必要があるらしい。<br/>
+そしてこれらは</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake gen_deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という一つのコマンドでまとめて行うこともできる。<br/>
+ただしこの場合は、rake generateで失敗した場合にもその状態でdeployされて、なんだか面倒なことになるらしいので自分は generateとdeployを分けて行っている。</p>
+
+<p>あと、<em>config.ymlが反映されない問題は、自分の場合は rake gen_deployを</em>config.ymlが置いてある階層で行うと上手く反映された（そして反映に少し時間がかかる場合があるのでちょっと待ってみる必要もあるかもしれない）<br/>
+とりあえず情報を更新する場合は、Octopressホームディレクトリ直下で gen_deploy すると間違いないのではないかと。</p>
+
+<p>なんだかよくわからないけど、とりあえずこれで上手くいってます。</p>
+
+<p>P.S<br/>
+deployではなく、rake previewしたときに上手くローカルに最新の内容が反映されない場合は、一度 rake previewを落として、再度 rake preview を実行すると上手く反映される。特に、サイドバーの情報変更や、_config.ymlの内容を変更してローカルで確認したい場合は、一度落として再度立ち上げないとうまく反映されないっぽい。</p>
+
+<p>&lt;参考><br/>
+・<a href="http://rcmdnk.github.io/blog/2013/03/07/setup-octopress/">GitHub pages + Octopressの導入</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-    <footer>
+
+<span class="byline author vcard">Posted by <span class="fn">Yuta Yoshida</span></span>
+
       
+
+
+
+
+<time class='entry-date' datetime='2015-03-25T18:38:30+09:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>25</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:38 pm</span></time>
       
-        <div class="sharing">
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/octopress/'>octopress</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
 
 <!--pocket button-->
 
@@ -152,11 +228,11 @@ $(document).ready( function () {
 
 
 <!--hatebu start-->
-<a href="http://b.hatena.ne.jp/entry/http://ysdyt.github.io/new-page/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+<a href="http://b.hatena.ne.jp/entry/http://ysdyt.github.io/blog/2015/03/25/octopress-memo/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
 
 <!--tweet button start-->
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ysdyt.github.io/new-page/index.html" data-via="yutatatatata" data-counturl="http://ysdyt.github.io/new-page/index.html" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ysdyt.github.io/blog/2015/03/25/octopress-memo/" data-via="yutatatatata" data-counturl="http://ysdyt.github.io/blog/2015/03/25/octopress-memo/" >Tweet</a>
   
 
 
@@ -178,10 +254,21 @@ $(document).ready( function () {
 
 </div>
 
+    
+    <p class="meta">
       
-    </footer>
-  
+        <a class="basic-alignment left" href="/blog/2015/03/20/start-new-blog/" title="Previous Post: テック用備忘録ブログ始めます">&laquo; テック用備忘録ブログ始めます</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -198,7 +285,7 @@ $(document).ready( function () {
 
     <img src="http://ysdyt.net/wp-content/uploads/2013/06/prof-e1370106403193.png" alt="profile pic" style="margin: 0px 0px 0px 0px" ;>
 
-    <p>計算機生物学（Bioinformatics）専攻の学生。Ruby王国島根県松江市を愛する。ミドリムシからバイオ燃料を作るための遺伝子解析研究をしてます。生命科学とITとfablicationと地域コミュニティーで楽しい事が出来ないか模索中。まちづくり, ライフサイエンス, 自治体ICT, オープンデータ, オープンガバメントネタを中心に書いています(ﾟ∀ﾟ)メインブログは<a href="http://ysdyt.net">ysdyt.net</a></p>
+    <p>計算機生物学（Bioinformatics）専攻の学生。Ruby王国島根県松江市を愛する。ミドリムシからバイオ燃料を作るための遺伝子解析研究をしてます。生命科学とITとfablicationと地域コミュニティーで楽しい事が出来ないか模索中。まちづくり, ライフサイエンス, 自治体ICT, オープンデータ, オープンガバメントネタを中心に書いています(ﾟ∀ﾟ)メインブログは<a href="http://ysdyt.net/?page_id=46">ysdyt.net</a></p>
     
     <p></p>
   </div>
@@ -236,6 +323,10 @@ $(document).ready( function () {
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/03/25/octopress-memo/">Octopress設定でつまずいたところメモ</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/03/20/start-new-blog/">テック用備忘録ブログ始めます</a>
       </li>
     
@@ -243,7 +334,7 @@ $(document).ready( function () {
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/octopress/'>octopress (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/octopress/'>octopress (2)</a></li></ul>
 </section>
 
 
@@ -270,7 +361,10 @@ $(document).ready( function () {
       var disqus_shortname = 'ysdytgithubio';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ysdyt.github.io/blog/2015/03/25/octopress-memo/';
+        var disqus_url = 'http://ysdyt.github.io/blog/2015/03/25/octopress-memo/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
