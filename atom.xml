@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-27T22:46:02+09:00</updated>
+  <updated>2015-03-28T01:16:34+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -12,6 +12,218 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Raspberry PiをWiMAXを使ってネット接続する]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/03/28/raspi-wifi-setting/"/>
+    <updated>2015-03-28T01:15:29+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/03/28/raspi-wifi-setting</id>
+    <content type="html"><![CDATA[<p>自宅では固定回線のネット契約をしていないので、WiMAXの無線ルーターを使っていつもネットに繋いでいる。<br/>
+ラズパイのネット接続解説はほとんどが有線ケーブルでの接続を前提にしているため、Wi-Fiでの接続方法を個人的な備忘録としてメモ。</p>
+
+<p>以下、Wi-Fiの設定は<a href="http://qiita.com/R-STYLE/items/8d37fb59e4872faee2bc">こちら</a>をほぼそのままコピペした。+αで個人的な補足を追加。</p>
+
+<!--more-->
+
+
+<p><br></p>
+
+<h3>使用したWi-Fiドングル</h3>
+
+<p>Rapberry Piの無線化には以下のドングルを使用。700円ほど。</p>
+
+<p>・<a href="http://www.amazon.co.jp/gp/product/B003NSAMW2/ref=pd_lpo_sbs_dp_ss_1?pf_rd_p=466449256&amp;pf_rd_s=lpo-top-stripe&amp;pf_rd_t=201&amp;pf_rd_i=B00879RO8W&amp;pf_rd_m=AN1VRQENFRJN5&amp;pf_rd_r=1RA98FWJ7XSKXHKYNV1M">BUFFALO 無線LAN子機 コンパクトモデル 11n技術・11g/b対応 WLI-UC-GNM</a></p>
+
+<p><br></p>
+
+<h3>/etc/network/interfacesの編集</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo nano /etc/network/interfaces
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>開いたファイルの中の下記2行を編集</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>iface wlan0 inet manual
+</span><span class='line'>wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>↓</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>iface wlan0 inet dhcp
+</span><span class='line'>wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>アクセスポイントのスキャン</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo iwlist wlan0 scan <span class="p">|</span> grep ESSID
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>実行すると、現在捕まえられるWi-Fiのネットワーク名（SSID）一覧が表示される。接続したいネットワーク名が存在するか確認。</p>
+
+<h3>アクセスポイントに接続テスト</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo iwconfig wlan0 essid 接続先のSSID key s:接続先のパスワード
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>接続の確認</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>iwconfig wlan0 <span class="p">|</span> grep ESSID
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>実行の結果、パスワードが合っていて、接続が可能であれば以下の様な表示が出る</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wlan0     IEEE 802.11bgn  ESSID:<span class="s2">&quot;接続先のSSID&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>接続情報の設定書き込み</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo su -   <span class="c">#rootになる</span>
+</span><span class='line'><span class="nv">$ </span>wpa_passphrase <span class="s2">&quot;接続先のSSID&quot;</span> <span class="s2">&quot;接続先のパスワード&quot;</span> &gt;&gt; /etc/wpa_supplicant/wpa_supplicant.conf  <span class="c">#ファイルへ情報の書き込み</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>この結果 /etc/wpa_supplicant/wpa_supplicant.confファイルの中身に以下の情報が入っていればok</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ctrl_interface</span><span class="o">=</span><span class="nv">DIR</span><span class="o">=</span>/var/run/wpa_supplicant <span class="nv">GROUP</span><span class="o">=</span>netdev
+</span><span class='line'><span class="nv">update_config</span><span class="o">=</span>1
+</span><span class='line'><span class="nv">network</span><span class="o">={</span>
+</span><span class='line'>        <span class="nv">ssid</span><span class="o">=</span><span class="s2">&quot;接続先のSSID&quot;</span>
+</span><span class='line'>        <span class="c">#psk=&quot;接続先のパスワード&quot;</span>
+</span><span class='line'>        <span class="nv">psk</span><span class="o">=</span>041015142746f4083a95c08ec26e2464687d305e7b0a635448eb3289e834090d
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後に pskの行の後に <code>scan_ssid=1</code>を追加。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ctrl_interface</span><span class="o">=</span><span class="nv">DIR</span><span class="o">=</span>/var/run/wpa_supplicant <span class="nv">GROUP</span><span class="o">=</span>netdev
+</span><span class='line'><span class="nv">update_config</span><span class="o">=</span>1
+</span><span class='line'><span class="nv">network</span><span class="o">={</span>
+</span><span class='line'>        <span class="nv">ssid</span><span class="o">=</span><span class="s2">&quot;接続先のSSID&quot;</span>
+</span><span class='line'>        <span class="c">#psk=&quot;接続先のパスワード&quot;</span>
+</span><span class='line'>        <span class="nv">psk</span><span class="o">=</span>041015142746f4083a95c08ec26e2464687d305e7b0a635448eb3289e834090d
+</span><span class='line'>        <span class="nv">scan_ssid</span><span class="o">=</span>1
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>別の機会に他のネットワークへの接続を追加で書き込むと、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">network</span><span class="o">={</span>
+</span><span class='line'>        <span class="nv">ssid</span><span class="o">=</span><span class="s2">&quot;接続先のSSID&quot;</span>
+</span><span class='line'>      hogehogehoge...
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="nv">network</span><span class="o">={</span>
+</span><span class='line'>        <span class="nv">ssid</span><span class="o">=</span><span class="s2">&quot;接続先のSSID2&quot;</span>
+</span><span class='line'>      hogehogehoge...
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="nv">network</span><span class="o">={</span>
+</span><span class='line'>        <span class="nv">ssid</span><span class="o">=</span><span class="s2">&quot;接続先のSSID3&quot;</span>
+</span><span class='line'>      hogehogehoge...
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じで、おしりに設定情報がどんどん追加されていく。</p>
+
+<h3>再起動</h3>
+
+<p>ここまで設定が完了したら後は再起動で設定を反映させるだけ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo reboot
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再起動後、自動でWi-Fiに接続されているはず。ブラウザなどでネット接続できるか確認してみる。</p>
+
+<h2><br></h2>
+
+<h3>SSHでRaspberry Piにリモートログイン</h3>
+
+<p>上記までの手順でネットに接続できていれば、IPアドレスが取得できているはずなのでIPアドレスを確認。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>ifconfig wlan0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以下のような内容が表示される。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wlan0     Link encap:イーサネット  ハードウェアアドレス cc:e1:d5:17:4f:32
+</span><span class='line'>          inetアドレス:192.168.0.3 ブロードキャスト:192.168.0.255  マスク:255.255.255.0
+</span><span class='line'>          UP BROADCAST RUNNING MULTICAST  MTU:1500  メトリック:1
+</span><span class='line'>          RXパケット:3799 エラー:0 損失:0 オーバラン:0 フレーム:0
+</span><span class='line'>          TXパケット:687 エラー:0 損失:0 オーバラン:0 キャリア:0
+</span><span class='line'>      衝突<span class="o">(</span>Collisions<span class="o">)</span>:0 TXキュー長:1000
+</span><span class='line'>          RXバイト:1046888 <span class="o">(</span>1022.3 KiB<span class="o">)</span>  TXバイト:88642 <span class="o">(</span>86.5 KiB<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このinetアドレスの値（英語環境では inet addrの値）を使って、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>ssh pi@192.168.0.3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とsshし、ログインパスワードを入れればリモートログイン出来て、自前のMacやWinからアクセスしてラズパイの操作が可能になる。（今回はdhcpの設定であり、固定アドレスではないの、ラズパイの電源を落としたりするとsshできなくなる）</p>
+
+<p>固定アドレスの設定方法はまた別エントリーにて。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Raspberry PiのCLI/GUIログインの切り替え]]></title>
