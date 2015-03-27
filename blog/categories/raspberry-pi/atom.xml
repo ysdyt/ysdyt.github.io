@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Raspberry Pi | ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/blog/categories/raspberry-pi/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-28T01:16:34+09:00</updated>
+  <updated>2015-03-28T01:49:36+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -87,7 +87,7 @@ $ wpa_passphrase "接続先のSSID" "接続先のパスワード" &gt;&gt; /etc/
 update_config=1
 network={
         ssid="接続先のSSID"
-        #psk="接続先のパスワード"
+        #psk="接続先のパスワード"  #紛らわしいのだけどpskの先頭の"#"も必要
         psk=041015142746f4083a95c08ec26e2464687d305e7b0a635448eb3289e834090d
 }
 </code></pre>
@@ -135,7 +135,8 @@ network={
 
 <h3>SSHでRaspberry Piにリモートログイン</h3>
 
-<p>上記までの手順でネットに接続できていれば、IPアドレスが取得できているはずなのでIPアドレスを確認。</p>
+<p>以後は別件なので必要な人だけ。<br/>
+上記までの手順でネットに接続できていれば、IPアドレスが取得できているはずなのでIPアドレスを確認。</p>
 
 <pre><code class="bash">$ ifconfig wlan0
 </code></pre>
