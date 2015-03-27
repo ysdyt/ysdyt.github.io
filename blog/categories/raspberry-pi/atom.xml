@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Raspberry Pi | ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/blog/categories/raspberry-pi/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-27T22:43:56+09:00</updated>
+  <updated>2015-03-27T22:46:02+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Raspi_cli_gui_login]]></title>
+    <title type="html"><![CDATA[Raspberry PiのCLI/GUIログインの切り替え]]></title>
     <link href="http://ysdyt.github.io/blog/2015/03/27/raspi-cli-gui-login/"/>
     <updated>2015-03-27T22:42:58+09:00</updated>
     <id>http://ysdyt.github.io/blog/2015/03/27/raspi-cli-gui-login</id>
@@ -26,6 +26,9 @@
 </code></pre>
 
 <p>少し待てば自動的にGUIのデスクトップが表示される。</p>
+
+<!--more-->
+
 
 <p><br></p>
 
