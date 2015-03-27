@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Raspberry Pi | ysdyt.net for tech memo]]></title>
+  <link href="http://ysdyt.github.io/blog/categories/raspberry-pi/atom.xml" rel="self"/>
+  <link href="http://ysdyt.github.io/"/>
+  <updated>2015-03-27T22:43:56+09:00</updated>
+  <id>http://ysdyt.github.io/</id>
+  <author>
+    <name><![CDATA[Yuta Yoshida]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Raspi_cli_gui_login]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/03/27/raspi-cli-gui-login/"/>
+    <updated>2015-03-27T22:42:58+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/03/27/raspi-cli-gui-login</id>
+    <content type="html"><![CDATA[<h3>CLIからGUIへの一時的な切り替え</h3>
+
+<p>Rapberry Piを初めに起動した時はCLIから始まる。GUIへは切り替えは下記のコマンドを実行</p>
+
+<pre><code class="bash">$ startx
+</code></pre>
+
+<p>少し待てば自動的にGUIのデスクトップが表示される。</p>
+
+<p><br></p>
+
+<h3>起動時から自動でGUIが立ち上がるようにする</h3>
+
+<p>raspi-configを起動</p>
+
+<pre><code class="bash">$ sudo raspi-config
+</code></pre>
+
+<p>メニューから<br/>
+「3 Enable Boot to Desktop/Scratch」を選び、<br/>
+「Desktop Log in as user &lsquo;pi&rsquo; at the graphical desktop」で「了解」を選択<br/>
+再起動を求められたら従う</p>
+
+<pre><code class="bash">$ sudo reboot
+</code></pre>
+
+<p>すると最初からGUIデスクトップ画面で起動するようになる。</p>
+
+<p><br></p>
+
+<h3>初期起動をCLIに戻す</h3>
+
+<p>GUI起動にした後、再びCLI起動に戻したければ、</p>
+
+<pre><code class="bash">$ sudo raspi-config
+</code></pre>
+
+<p>メニューから<br/>
+「3 Enable Boot to Desktop/Scratch」を選び、<br/>
+「Console Text console, requiring login (default)」で「了解」を選択<br/>
+その後、再起動をかけるとCLIから始まるようになっている</p>
+]]></content>
+  </entry>
+  
+</feed>
