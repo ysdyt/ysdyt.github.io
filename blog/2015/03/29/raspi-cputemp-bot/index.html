@@ -1,0 +1,593 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Twitter APIを使ってRaspberry PiにCPU温度と現在時刻を呟かせる - ysdyt.net for tech memo</title>
+  <meta name="author" content="Yuta Yoshida">
+
+  
+  <meta name="description" content="こんな感じで一時間（任意の時間）に一回、Rapberry PiのCPU温度をツイートさせる。 2015-03-11_12:00:03現在 CPU温度は 31.5 ℃です。&mdash; ysdyt_raspi (@ysdyt_raspi) 2015, 3月 11 これが何の役に立つかだって？ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="ysdyt.net for tech memo" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  <script type="text/javascript">
+    (function() {
+      var s = document.createElement('script');
+      s.src = 'http://s.hatena.ne.jp/js/HatenaStar.js';
+      s.async = true;
+      s.onload = function () {
+        (function() {
+          var base = Hatena.Star.EntryLoader.getElementByConfigSelector;
+          Hatena.Star.EntryLoader.getElementByConfigSelector = function(selector, parent) {
+            var links, n, i, link, a;
+            if (selector == 'link[rel="canonical"]') {
+              links = document.getElementsByTagName('link');
+              for (i = 0, n = links.length; i < n; ++i) {
+                link = links[i];
+                if (link.rel == 'canonical') {
+                  a = document.createElement('a');
+                  a.setAttribute('href', link.href);
+                  return a.cloneNode(false);
+                }
+              }
+            }
+            else {
+              return base(selector, parent);
+            }
+            return null;
+          };
+        })();
+        Hatena.Star.Token = '98c1fc6157903ae00745366577f6edb0aa77fc94';
+        Hatena.Star.SiteConfig = {
+          entryNodes: {
+            '#content article': {
+              
+                uri: 'link[rel="canonical"]',
+              
+              title: '.entry-title',
+              container: '.meta'
+            }
+          }
+        };
+      };
+      document.getElementsByTagName('head')[0].appendChild(s);
+    }());
+  </script>
+
+
+
+<!--open link with target blank-->
+<script language="JavaScript">
+$(document).ready( function () {
+   $("a[href^='http']:not([href*='" + location.hostname + "'])").attr('target', '_blank');
+})
+</script>
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-60961437-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ysdyt.net for tech memo</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="ysdyt.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Twitter APIを使ってRaspberry PiにCPU温度と現在時刻を呟かせる</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-03-29T03:29:06+09:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:29 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんな感じで一時間（任意の時間）に一回、Rapberry PiのCPU温度をツイートさせる。</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>2015-03-11_12:00:03現在 CPU温度は 31.5 ℃です。</p>&mdash; ysdyt_raspi (@ysdyt_raspi) <a href="https://twitter.com/ysdyt_raspi/status/575491347655716865">2015, 3月 11</a></blockquote>
+
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>これが何の役に立つかだって？自己満足だよ！強いて言うなら、ラズパイの定期生存確認が出来る。</p>
+
+<!--more-->
+
+
+<h3>必要なパッケージをインストールする</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo apt-get install python-setuptools
+</span><span class='line'><span class="nv">$ </span>sudo easy_install pip <span class="c">#pipコマンドのインストール</span>
+</span><span class='line'><span class="nv">$ </span>sudo pip install twython <span class="c">#twythonをpipコマンドでインストール</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>TwitterのAPI情報を取得</h3>
+
+<p>Twitterのアカウントを作成し、<a href="http://apps.twitter.com/">http://apps.twitter.com/</a> にアクセス。<br/>
+「Create New App」をクリックしてアプリケーション名や説明を入力し、登録後の画面で「Access level」を「Read and Write」に変更。</p>
+
+<p>twythonプログラムに与える権限の認証情報は「Keys and Access Tokens」タブにある。<br/>
+「Create my access token」をクリックし、「API Key」「API Secret」「Access Token」「Access Token Secret」を取得。
+<br></p>
+
+<h3>twythonを使ってツイートするプログラムの作成</h3>
+
+<p>pythonスクリプトを新規作成し、下記を書き込む。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nano raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'><span class="c"># coding: utf-8</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">Twython</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#twitterの認証情報を入力</span>
+</span><span class='line'><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Key&#39;</span>
+</span><span class='line'><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Secret&#39;</span>
+</span><span class='line'><span class="n">ACCESS_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token&#39;</span>
+</span><span class='line'><span class="n">ACCESS_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token Secret&#39;</span>
+</span><span class='line'><span class="n">api</span> <span class="o">=</span> <span class="n">Twython</span><span class="p">(</span><span class="n">CONSUMER_KEY</span><span class="p">,</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span><span class="n">ACCESS_KEY</span><span class="p">,</span><span class="n">ACCESS_SECRET</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#CPU温度を取得</span>
+</span><span class='line'><span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;/opt/vc/bin/vcgencmd measure_temp&#39;</span>
+</span><span class='line'><span class="n">line</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'><span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#取得したCPU温度をツイート</span>
+</span><span class='line'><span class="n">api</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span> <span class="s">&#39;CPU温度は &#39;</span><span class="o">+</span><span class="n">temp</span><span class="o">+</span><span class="s">&#39; ℃です。&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>作成したファイルに実行権限を与える。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>chmod +x raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>その後、一度実行してみてtwitterに投稿されるかを確認してみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>python raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>twitterのタイムライン上で温度の投稿が確認できれば、次はこれを定期実行するようにする。
+<br></p>
+
+<h3>raspi_bot.pyを定期実行させる</h3>
+
+<p>&ldquo;cron&#8221;にてraspi_bot.pyを自動的に定期実行させる。cronについては<a href="http://www.server-memo.net/tips/crontab.html">こちら</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>crontab -e
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで新たに開くウィンドウの下部に、次の一文を書き込み保存。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="m">00</span> * * * *  python /home/pi/raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>この一文の意味は<a href="http://www.server-memo.net/tips/crontab.html">こちら</a>を参照して欲しいが、</p>
+
+<p>・<code>00 * * * *</code> -> 一時間に一回、指示したジョブを自動実行
+・<code>python /home/pi/raspi_bot.py</code> -> 自動実行させるジョブ</p>
+
+<p>を表している。定期実行させる間隔は任意に指定できる。</p>
+
+<p>ひとまずこれで完了。時間を置いて様子を見てみると、指定した時間間隔で自動的にツイートされているハズ。
+<br></p>
+
+<h3>しかしここで問題が、、、</h3>
+
+<p>1時間に一回タイムラインに流れるはずのツイートだが、投稿されていない時間があることを発見&hellip;<br/>
+原因を調べるべく、手動でraspi_bot.pyを何度が実行していたところ、下記のようなエラーがたまに出ることがわかった。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Twitter API returned a <span class="m">403</span> <span class="o">(</span>Forbidden<span class="o">)</span>, Status is a duplicate.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>エラー曰く、重複した投稿（過去に全く同じ内容のツイートをした場合）はツイート出来ないようになっているらしい。知らなかった&hellip;どうやら同じCPU温度を取得しているツイートが弾かれていた模様。
+<br></p>
+
+<h3>現在時間を取得する（タイムスタンプを取得）</h3>
+
+<p>これを回避するべく、タイムスタンプ（現在時刻）を入れることにする。これでツイート内容の重複を回避できる。<br/>
+例: 「2015-03-11_12:00:03」という部分の情報</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>2015-03-11_12:00:03現在、CPU温度は 31.5 ℃です。</p>&mdash; ysdyt_raspi (@ysdyt_raspi) <a href="https://twitter.com/ysdyt_raspi/status/575491347655716865">2015, 3月 11</a></blockquote>
+
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p><br>
+<a href="https://github.com/raspberrypilearning/temperature-log/blob/master/worksheet.md">こちら</a>を参考にしながら上記の<code>raspi_bot.py</code>にタイムスタンプを取得するコードを追加する。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'><span class="c"># coding: utf-8</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">Twython</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#twitterの認証情報を入力</span>
+</span><span class='line'><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Key&#39;</span>
+</span><span class='line'><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Secret&#39;</span>
+</span><span class='line'><span class="n">ACCESS_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token&#39;</span>
+</span><span class='line'><span class="n">ACCESS_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token Secret&#39;</span>
+</span><span class='line'><span class="n">api</span> <span class="o">=</span> <span class="n">Twython</span><span class="p">(</span><span class="n">CONSUMER_KEY</span><span class="p">,</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span><span class="n">ACCESS_KEY</span><span class="p">,</span><span class="n">ACCESS_SECRET</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#CPU温度を取得</span>
+</span><span class='line'><span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;/opt/vc/bin/vcgencmd measure_temp&#39;</span>
+</span><span class='line'><span class="n">line</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'><span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#現在時間を取得</span>
+</span><span class='line'><span class="n">timestamp</span> <span class="o">=</span> <span class="s">&#39;date +</span><span class="si">%F</span><span class="s">_%H:%M:%S&#39;</span>
+</span><span class='line'><span class="n">current_time</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#取得したCPU温度をツイート</span>
+</span><span class='line'><span class="n">api</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span> <span class="n">current_time</span><span class="o">+</span><span class="s">&#39;現在、CPU温度は &#39;</span><span class="o">+</span><span class="n">temp</span><span class="o">+</span><span class="s">&#39; ℃です。&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、タイムスタンプが追加されツイートの内容重複が回避される。</p>
+
+<h3>自動スリープを解除する</h3>
+
+<p>またまた動作を観察していると、どこかの段階から全くツイートされなくなっていた&hellip;
+調べてみるとラズパイはデフォルトでは自動でスリープする設定になっているらしい。
+<a href="http://akiomik.hatenablog.jp/entry/2013/09/12/211523">こちら</a>を参考にして自動スリープを解除した。これでようやく完成。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Yuta Yoshida</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-03-29T03:29:06+09:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:29 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/raspberry-pi/'>raspberry pi</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+
+<!--pocket button-->
+
+<a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a>
+<script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script>
+
+
+<!--hatebu start-->
+<a href="http://b.hatena.ne.jp/entry/http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+
+<!--tweet button start-->
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/" data-via="yutatatatata" data-counturl="http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/" >Tweet</a>
+  
+
+
+<div class="facebook_share">
+  <div class="fb-share-button"
+      data-type="button_count"
+      data-layout="button_count"
+      data-font="verdana"
+      data-href=""></div>
+</div>
+
+<!--google plus start-->
+  
+
+<!--facebook like start-->
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/03/28/raspi-wifi-setting/" title="Previous Post: Raspberry PiをWiMAXを使ってネット接続する">&laquo; Raspberry PiをWiMAXを使ってネット接続する</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section>
+  <h1>About Me</h1>
+  <div id="twitter-profile" style="margin-top:0.5em;">
+    <p>
+      <strong>Yuta Yoshida</strong> 
+      (<a href="http://twitter.com/yutatatatata">@yutatatatata</a>)
+    </p>
+
+    <img src="http://ysdyt.net/wp-content/uploads/2013/06/prof-e1370106403193.png" alt="profile pic" style="margin: 0px 0px 0px 0px" ;>
+
+    <p>計算機生物学（Bioinformatics）専攻の学生。Ruby王国島根県松江市を愛する。ミドリムシからバイオ燃料を作るための遺伝子解析研究をしてます。生命科学とITとfablicationと地域コミュニティーで楽しい事が出来ないか模索中。まちづくり, ライフサイエンス, 自治体ICT, オープンデータ, オープンガバメントネタを中心に書いています(ﾟ∀ﾟ)メインブログは<a href="http://ysdyt.net/?page_id=46">ysdyt.net</a></p>
+    
+    <p></p>
+  </div>
+
+  <script type="text/javascript">
+    $(function(){
+        var container = $('#twitter-profile'),
+            user = "yutatatatata";
+        
+        function parseTwLinks(s) {
+          var twUrl = "http://www.twitter.com/"
+          s = s.replace(/ (@([\w]+))/g, function(match, p1, p2) {
+              return " <a href='"+twUrl+p2+"'>"+p1+"</a>"
+          }).replace(/ (#([\w]+))/g, function(match, p1, p2) {
+              return " <a href='"+twUrl+"#!/search?q=%23"+p2+"'>"+p1+"</a>"
+          })
+          return s
+        }
+
+        $.ajax({
+            url: "http://api.twitter.com/1/users/show.json?include_entities=false&screen_name="+user+"&callback=?"
+          , type: 'GET'
+          , dataType: 'jsonp'
+          , error: function (err) { $('#twitter-profile').addClass('error');  }
+          , success: function(data) {
+              container.html('<img class="left" src="http://api.twitter.com/1/users/profile_image/'+user+'.json?size=bigger" alt="@'+user+'"><p><strong>'+data.name+'</strong> (<a href="http://twitter.com/'+user+'">@'+user+'</a>)<br/>'+data.location+'</p><p>'+parseTwLinks(data.description)+'</p>');
+            }
+        })
+      });
+  </script>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/03/29/raspi-cputemp-bot/">Twitter APIを使ってRaspberry PiにCPU温度と現在時刻を呟かせる</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/28/raspi-wifi-setting/">Raspberry PiをWiMAXを使ってネット接続する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/27/raspi-cli-gui-login/">Raspberry PiのCLI/GUIログインの切り替え</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/25/octopress-memo/">Octopress設定でつまずいたところメモ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/20/start-new-blog/">テック用備忘録ブログ始めます</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/octopress/'>octopress (2)</a></li><li><a href='/blog/categories/raspberry-pi/'>raspberry pi (3)</a></li></ul>
+</section>
+
+
+
+
+<a class="twitter-timeline" href="https://twitter.com/yutatatatata" data-widget-id="578629067915669505">@yutatatatataさんのツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Yuta Yoshida -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ysdytgithubio';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/';
+        var disqus_url = 'http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/ja_JP/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

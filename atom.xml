@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-28T01:51:40+09:00</updated>
+  <updated>2015-03-29T03:43:47+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -12,6 +12,231 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Twitter APIを使ってRaspberry PiにCPU温度と現在時刻を呟かせる]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot/"/>
+    <updated>2015-03-29T03:29:06+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/03/29/raspi-cputemp-bot</id>
+    <content type="html"><![CDATA[<p>こんな感じで一時間（任意の時間）に一回、Rapberry PiのCPU温度をツイートさせる。</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>2015-03-11_12:00:03現在 CPU温度は 31.5 ℃です。</p>&mdash; ysdyt_raspi (@ysdyt_raspi) <a href="https://twitter.com/ysdyt_raspi/status/575491347655716865">2015, 3月 11</a></blockquote>
+
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>これが何の役に立つかだって？自己満足だよ！強いて言うなら、ラズパイの定期生存確認が出来る。</p>
+
+<!--more-->
+
+
+<h3>必要なパッケージをインストールする</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo apt-get install python-setuptools
+</span><span class='line'><span class="nv">$ </span>sudo easy_install pip <span class="c">#pipコマンドのインストール</span>
+</span><span class='line'><span class="nv">$ </span>sudo pip install twython <span class="c">#twythonをpipコマンドでインストール</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>TwitterのAPI情報を取得</h3>
+
+<p>Twitterのアカウントを作成し、<a href="http://apps.twitter.com/">http://apps.twitter.com/</a> にアクセス。<br/>
+「Create New App」をクリックしてアプリケーション名や説明を入力し、登録後の画面で「Access level」を「Read and Write」に変更。</p>
+
+<p>twythonプログラムに与える権限の認証情報は「Keys and Access Tokens」タブにある。<br/>
+「Create my access token」をクリックし、「API Key」「API Secret」「Access Token」「Access Token Secret」を取得。
+<br></p>
+
+<h3>twythonを使ってツイートするプログラムの作成</h3>
+
+<p>pythonスクリプトを新規作成し、下記を書き込む。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nano raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'><span class="c"># coding: utf-8</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">Twython</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#twitterの認証情報を入力</span>
+</span><span class='line'><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Key&#39;</span>
+</span><span class='line'><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Secret&#39;</span>
+</span><span class='line'><span class="n">ACCESS_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token&#39;</span>
+</span><span class='line'><span class="n">ACCESS_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token Secret&#39;</span>
+</span><span class='line'><span class="n">api</span> <span class="o">=</span> <span class="n">Twython</span><span class="p">(</span><span class="n">CONSUMER_KEY</span><span class="p">,</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span><span class="n">ACCESS_KEY</span><span class="p">,</span><span class="n">ACCESS_SECRET</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#CPU温度を取得</span>
+</span><span class='line'><span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;/opt/vc/bin/vcgencmd measure_temp&#39;</span>
+</span><span class='line'><span class="n">line</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'><span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#取得したCPU温度をツイート</span>
+</span><span class='line'><span class="n">api</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span> <span class="s">&#39;CPU温度は &#39;</span><span class="o">+</span><span class="n">temp</span><span class="o">+</span><span class="s">&#39; ℃です。&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>作成したファイルに実行権限を与える。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>chmod +x raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>その後、一度実行してみてtwitterに投稿されるかを確認してみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>python raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>twitterのタイムライン上で温度の投稿が確認できれば、次はこれを定期実行するようにする。
+<br></p>
+
+<h3>raspi_bot.pyを定期実行させる</h3>
+
+<p>&ldquo;cron&#8221;にてraspi_bot.pyを自動的に定期実行させる。cronについては<a href="http://www.server-memo.net/tips/crontab.html">こちら</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>crontab -e
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで新たに開くウィンドウの下部に、次の一文を書き込み保存。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="m">00</span> * * * *  python /home/pi/raspi_bot.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>この一文の意味は<a href="http://www.server-memo.net/tips/crontab.html">こちら</a>を参照して欲しいが、</p>
+
+<p>・<code>00 * * * *</code> -> 一時間に一回、指示したジョブを自動実行
+・<code>python /home/pi/raspi_bot.py</code> -> 自動実行させるジョブ</p>
+
+<p>を表している。定期実行させる間隔は任意に指定できる。</p>
+
+<p>ひとまずこれで完了。時間を置いて様子を見てみると、指定した時間間隔で自動的にツイートされているハズ。
+<br></p>
+
+<h3>しかしここで問題が、、、</h3>
+
+<p>1時間に一回タイムラインに流れるはずのツイートだが、投稿されていない時間があることを発見&hellip;<br/>
+原因を調べるべく、手動でraspi_bot.pyを何度が実行していたところ、下記のようなエラーがたまに出ることがわかった。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Twitter API returned a <span class="m">403</span> <span class="o">(</span>Forbidden<span class="o">)</span>, Status is a duplicate.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>エラー曰く、重複した投稿（過去に全く同じ内容のツイートをした場合）はツイート出来ないようになっているらしい。知らなかった&hellip;どうやら同じCPU温度を取得しているツイートが弾かれていた模様。
+<br></p>
+
+<h3>現在時間を取得する（タイムスタンプを取得）</h3>
+
+<p>これを回避するべく、タイムスタンプ（現在時刻）を入れることにする。これでツイート内容の重複を回避できる。<br/>
+例: 「2015-03-11_12:00:03」という部分の情報</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>2015-03-11_12:00:03現在、CPU温度は 31.5 ℃です。</p>&mdash; ysdyt_raspi (@ysdyt_raspi) <a href="https://twitter.com/ysdyt_raspi/status/575491347655716865">2015, 3月 11</a></blockquote>
+
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p><br>
+<a href="https://github.com/raspberrypilearning/temperature-log/blob/master/worksheet.md">こちら</a>を参考にしながら上記の<code>raspi_bot.py</code>にタイムスタンプを取得するコードを追加する。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'><span class="c"># coding: utf-8</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">Twython</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#twitterの認証情報を入力</span>
+</span><span class='line'><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Key&#39;</span>
+</span><span class='line'><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAPI Secret&#39;</span>
+</span><span class='line'><span class="n">ACCESS_KEY</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token&#39;</span>
+</span><span class='line'><span class="n">ACCESS_SECRET</span> <span class="o">=</span> <span class="s">&#39;取得したAccess Token Secret&#39;</span>
+</span><span class='line'><span class="n">api</span> <span class="o">=</span> <span class="n">Twython</span><span class="p">(</span><span class="n">CONSUMER_KEY</span><span class="p">,</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span><span class="n">ACCESS_KEY</span><span class="p">,</span><span class="n">ACCESS_SECRET</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#CPU温度を取得</span>
+</span><span class='line'><span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;/opt/vc/bin/vcgencmd measure_temp&#39;</span>
+</span><span class='line'><span class="n">line</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'><span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#現在時間を取得</span>
+</span><span class='line'><span class="n">timestamp</span> <span class="o">=</span> <span class="s">&#39;date +</span><span class="si">%F</span><span class="s">_%H:%M:%S&#39;</span>
+</span><span class='line'><span class="n">current_time</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#取得したCPU温度をツイート</span>
+</span><span class='line'><span class="n">api</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span> <span class="n">current_time</span><span class="o">+</span><span class="s">&#39;現在、CPU温度は &#39;</span><span class="o">+</span><span class="n">temp</span><span class="o">+</span><span class="s">&#39; ℃です。&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、タイムスタンプが追加されツイートの内容重複が回避される。</p>
+
+<h3>自動スリープを解除する</h3>
+
+<p>またまた動作を観察していると、どこかの段階から全くツイートされなくなっていた&hellip;
+調べてみるとラズパイはデフォルトでは自動でスリープする設定になっているらしい。
+<a href="http://akiomik.hatenablog.jp/entry/2013/09/12/211523">こちら</a>を参考にして自動スリープを解除した。これでようやく完成。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Raspberry PiをWiMAXを使ってネット接続する]]></title>
