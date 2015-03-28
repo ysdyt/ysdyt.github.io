@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-29T04:03:03+09:00</updated>
+  <updated>2015-03-29T04:05:06+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -142,8 +142,8 @@
 
 <p>この一文の意味は<a href="http://www.server-memo.net/tips/crontab.html">こちら</a>を参照して欲しいが、</p>
 
-<p>&ldquo;00 * * * *&rdquo; -> 一時間に一回、指示したジョブを自動実行<br/>
-&ldquo;python /home/pi/raspi_bot.py&rdquo; -> 自動実行させるジョブ</p>
+<p>・<code>00 * * * *</code> -> 一時間に一回、指示したジョブを自動実行<br/>
+・<code>python /home/pi/raspi_bot.py</code> -> 自動実行させるジョブ</p>
 
 <p>を表している。定期実行させる間隔は任意に指定できる。</p>
 
