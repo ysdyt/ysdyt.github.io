@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-03-29T04:05:06+09:00</updated>
+  <updated>2015-06-28T14:05:50+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Twitter APIを使ってRaspberry PiにCPU温度と現在時刻を呟かせる]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/06/28/title/"/>
+    <updated>2015-06-28T13:54:08+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/06/28/title</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Twitter APIを使ってRaspberry PiにCPU温度と現在時刻を呟かせる]]></title>
@@ -233,8 +242,11 @@
 <h3>自動スリープを解除する</h3>
 
 <p>またまた動作を観察していると、どこかの段階から全くツイートされなくなっていた&hellip;
-調べてみるとラズパイはデフォルトでは自動でスリープする設定になっているらしい。
+<del>調べてみるとラズパイはデフォルトでは自動でスリープする設定になっているらしい。
 <a href="http://akiomik.hatenablog.jp/entry/2013/09/12/211523">こちら</a>を参考にして自動スリープを解除した。これでようやく完成。</p>
+
+<p>[訂正] 上記の自動スリープの話はただ単にモニター出力が自動でスリープするという話だった。
+ラズパイを起動し続けると（具体的には2日半くらい）自動でシャットダウン?する減少はまだ解決できていない&hellip;熱暴走が原因か？</p>
 ]]></content>
   </entry>
   
