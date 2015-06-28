@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-06-28T17:52:38+09:00</updated>
+  <updated>2015-06-28T17:59:10+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -34,7 +34,7 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>pi% lsusb                                                                                   <span class="o">[</span>~<span class="o">]</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>% lsusb                                                                                   <span class="o">[</span>~<span class="o">]</span>
 </span><span class='line'>Bus <span class="m">001</span> Device 002: ID 0424:9514 Standard Microsystems Corp.
 </span><span class='line'>Bus <span class="m">001</span> Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 </span><span class='line'>Bus <span class="m">001</span> Device 003: ID 0424:ec00 Standard Microsystems Corp.
@@ -42,18 +42,18 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>自分は<a href="(http://www.amazon.co.jp/gp/product/B003NSAMW2/ref=pd_lpo_sbs_dp_ss_1?pf_rd_p=466449256&amp;pf_rd_s=lpo-top-stripe&amp;pf_rd_t=201&amp;pf_rd_i=B00879RO8W&amp;pf_rd_m=AN1VRQENFRJN5&amp;pf_rd_r=1RA98FWJ7XSKXHKYNV1M">BUFFALOの無線LAN子機</a>)を使っていて、それが4つ目にきちんと認識されているのでoｋ</p>
+<p>自分は<a href="http://www.amazon.co.jp/gp/product/B003NSAMW2/ref=pd_lpo_sbs_dp_ss_1?pf_rd_p=466449256&amp;pf_rd_s=lpo-top-stripe&amp;pf_rd_t=201&amp;pf_rd_i=B00879RO8W&amp;pf_rd_m=AN1VRQENFRJN5&amp;pf_rd_r=1RA98FWJ7XSKXHKYNV1M">BUFFALOの無線LAN子機</a>を使っていて、それが4つ目にきちんと認識されているのでoｋ</p>
 
 <h3>アクセスポイントのスキャン</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo iwlist wlan0 scan <span class="p">|</span> grep ESSID
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>% sudo iwlist wlan0 scan <span class="p">|</span> grep ESSID
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>実行すると、現在捕まえられるWi-Fiのネットワーク名（SSID）一覧が表示される。接続したいネットワーク名が存在するか確認。</p>
 
-<h4>接続情報の設定書き込み</h4>
+<h3>接続情報の設定書き込み</h3>
 
 <p>上記で確認した接続先ルーターのSSIDとそのパスワードを以下のファイルに書き込む。</p>
 
@@ -84,7 +84,7 @@
 <p>中にpskが２つ書かれていて、そのうちの一つがコメントアウトされている。
 ２つ目のpskは接続先のパスワードがハッシュで鍵化されているもの。どちらでも同じ内容を指すのでどちらか一方だけコメントアウトしてればok。ここでは鍵化したpskを使った。</p>
 
-<h4>/etc/wpa_supplicant/wpa_supplicant.confの編集</h4>
+<h3>/etc/wpa_supplicant/wpa_supplicant.confの編集</h3>
 
 <p>固定化IPを設定するため、上記のファイルを編集して以下の状態に書き換える。</p>
 
@@ -117,7 +117,7 @@
 
 <p>いろいろ別のブログを見てみると、pairwiseやgroupに&#8221;CCMP&#8221;と設定する方法もあるそうだが、自分の場合は&#8221;TKIP CCMP&#8221;でうまくいった。また、proto=RSNとしているものもあるが、同じくproto=WPA2でうまくいった。</p>
 
-<h4>/etc/network/interfacesの編集</h4>
+<h3>/etc/network/interfacesの編集</h3>
 
 <p>続いて、/etc/network/interfacesファイルを以下のように編集する。</p>
 
@@ -173,12 +173,12 @@
 
 <p>このときに、「can&rsquo;t read /etc/network/interfaces」などと出たら、上記ファイルの記述が誤っていないか確認する。</p>
 
-<h4>固定IPで接続できているか確認する</h4>
+<h3>固定IPで接続できているか確認する</h3>
 
 <p>上記までの手順でネットに接続できていれば、固定IPアドレスが取得できているはずなのでIPアドレスを確認。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>ifconfig wlan0
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>% ifconfig wlan0
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -192,7 +192,7 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>wlan0     Link encap:イーサネット  ハードウェアアドレス xx:xx:xx:xx:xx:xx
-</span><span class='line'>          inetアドレス:192.168.0.3 ブロードキャスト:192.168.0.255  マスク:255.255.255.0
+</span><span class='line'>          inetアドレス:192.168.1.101 ブロードキャスト:192.168.0.255  マスク:255.255.255.0
 </span><span class='line'>          UP BROADCAST RUNNING MULTICAST  MTU:1500  メトリック:1
 </span><span class='line'>          RXパケット:3799 エラー:0 損失:0 オーバラン:0 フレーム:0
 </span><span class='line'>          TXパケット:687 エラー:0 損失:0 オーバラン:0 キャリア:0
@@ -204,12 +204,12 @@
 <p>このinetアドレスの値（英語環境では inet addrの値）が設定したIPアドレスになっていればok。
 ここまで正しく設定できれば、後は再起動してもWiFiで固定IPの設定が維持されるはず。</p>
 
-<h4>グローバルIPアドレス？</h4>
+<h3>グローバルIPアドレス？</h3>
 
 <p>これで（家の中の）同じネットワークに繋がってるPCから<code>ssh pi@192.168.1.101</code> でログイン出来るようになったのだけど、家の外からラズパイにsshは出来ない。
 それにはどうやらグローバルIPアドレスなるものを割り振らないといけないらしいのだが、それはまた次回に。</p>
 
-<p>・参考
+<p>・参考<br>
 /etc/network/interfacesファイルの設定にかなりハマってたのですが以下のページが大変参考になりました。多謝！
 <a href="http://tkamada.blogspot.jp/2014/07/raspberry-piwifi-dhcpip.html">http://tkamada.blogspot.jp/2014/07/raspberry-piwifi-dhcpip.html</a></p>
 ]]></content>
