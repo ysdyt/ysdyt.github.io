@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-06-28T16:56:32+09:00</updated>
+  <updated>2015-06-28T17:52:38+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -21,6 +21,9 @@
     <content type="html"><![CDATA[<p>以前、wimaxを使ったネット接続の無線化について書きましたが、次はIPアドレスの固定化について。IP固定化とかじゃなくとにかく有線から無線での接続さえできれば良いという人は<a href="http://ysdyt.github.io/blog/2015/03/28/raspi-wifi-setting/">こちら</a></p>
 
 <p>ちなみに今回はwimaxではなく、フレッツ光の回線を使って設定しています（wimaxも有料オプションで固定IPが振れるそうですが詳しくは知らない）。</p>
+
+<!--more-->
+
 
 <h3>無線LAN機器接続の確認</h3>
 
