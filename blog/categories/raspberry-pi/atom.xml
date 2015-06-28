@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Raspberry Pi | ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/blog/categories/raspberry-pi/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-06-28T18:25:14+09:00</updated>
+  <updated>2015-06-28T22:04:20+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Raspberry Piに公開鍵認証を使ってsshする]]></title>
+    <link href="http://ysdyt.github.io/blog/2015/06/28/ssh_with_rsa/"/>
+    <updated>2015-06-28T18:30:22+09:00</updated>
+    <id>http://ysdyt.github.io/blog/2015/06/28/ssh_with_rsa</id>
+    <content type="html"><![CDATA[<!--more-->
+
+
+<h2>#</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Raspberry Piに固定IPを割り振る]]></title>
@@ -47,9 +59,12 @@ Bus 001 Device 004: ID 0411:01a2 BUFFALO INC. (formerly MelCo., Inc.) WLI-UC-GNM
 
 <h3>接続情報の設定書き込み</h3>
 
-<p>上記で確認した接続先ルーターのSSIDとそのパスワードを以下のファイルに書き込む。</p>
+<p>上記で確認した接続先ルーターのSSIDとそのパスワードを以下のようにファイルに書き込む。
+この時、zshなど他のshellで操作してると「権限がない」みたいなエラーを出されるかもしれない。その時のためにbashにログインし、権限を変更してから wpa_passphraseの1文を実行する</p>
 
-<pre><code class="bash">% sudo wpa_passphrase "接続先のSSID" "接続先のパスワード" &gt;&gt; /etc/wpa_supplicant/wpa_supplicant.conf
+<pre><code class="bash">% sudo bash  # bashでrootユーザにログイン
+# chmod 660 /etc/wpa_suoplicant/wpa_supplicant.comf #権限の変更
+# sudo wpa_passphrase "接続先のSSID" "接続先のパスワード" &gt;&gt; /etc/wpa_supplicant/wpa_supplicant.conf
 </code></pre>
 
 <p>この結果 /etc/wpa_supplicant/wpa_supplicant.confファイルの中身に以下のような情報が入っていればok</p>
@@ -64,7 +79,7 @@ network={
 </code></pre>
 
 <p>中にpskが２つ書かれていて、そのうちの一つがコメントアウトされている。
-２つ目のpskは接続先のパスワードがハッシュで鍵化されているもの。どちらでも同じ内容を指すのでどちらか一方だけコメントアウトしてればok。ここでは鍵化したpskを使った。</p>
+２つ目のpskは接続先のパスワードがハッシュで鍵化されているもの。どちらでも同じ内容を指すのでどちらか一方だけコメントアウトしてればok。ここでは鍵化されたpskを使った。</p>
 
 <h3>/etc/wpa_supplicant/wpa_supplicant.confの編集</h3>
 
@@ -137,8 +152,16 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
           RXバイト:1046888 (1022.3 KiB)  TXバイト:88642 (86.5 KiB)
 </code></pre>
 
-<p>このinetアドレスの値（英語環境では inet addrの値）が設定したIPアドレスになっていればok。
-ここまで正しく設定できれば、後は再起動してもWiFiで固定IPの設定が維持されるはず。</p>
+<p>このinetアドレスの値（英語環境では inet addrの値）が設定したIPアドレスになっていればok。 これで一応、IPは固定出来てる。ここまで正しく設定できれば、後は再起動してもWiFiで固定IPの設定が維持されるはず。</p>
+
+<p>後はネットアクセスできるかpingで確認してみる。テキトーにyahooにアクセスしてみる。</p>
+
+<pre><code>% ping www.yahoo.com                                                                   
+PING fd-fp3.wg1.b.yahoo.com (106.10.139.246): 56 data bytes
+64 bytes from 106.10.139.246: icmp_seq=0 ttl=50 time=72.299 ms
+</code></pre>
+
+<p>64 bytes from~~ というのがどんどん流れていけば接続もok</p>
 
 <h3>グローバルIPアドレス？</h3>
 
