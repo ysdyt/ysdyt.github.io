@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Raspberry Pi | ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/blog/categories/raspberry-pi/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-06-28T17:59:10+09:00</updated>
+  <updated>2015-06-28T18:06:14+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -117,7 +117,7 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 % sudo ifup wlan0   # WiFiを接続する
 </code></pre>
 
-<p>このときに、「can&rsquo;t read /etc/network/interfaces」などと出たら、上記ファイルの記述が誤っていないか確認する。</p>
+<p>このときに、<code>can't read /etc/network/interfaces</code>などと出たら、上記ファイルの記述が誤っていないか確認する。</p>
 
 <h3>固定IPで接続できているか確認する</h3>
 
@@ -146,8 +146,16 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 それにはどうやらグローバルIPアドレスなるものを割り振らないといけないらしいのだが、それはまた次回に。</p>
 
 <p>・参考<br>
-/etc/network/interfacesファイルの設定にかなりハマってたのですが以下のページが大変参考になりました。多謝！
+/etc/network/interfacesファイルの設定にかなりハマってたのですが以下のページが大変参考になりました。多謝！</p>
+
+<p>Raspberry PiのWiFi設定-DHCPから固定IPアドレスまで最速版
 <a href="http://tkamada.blogspot.jp/2014/07/raspberry-piwifi-dhcpip.html">http://tkamada.blogspot.jp/2014/07/raspberry-piwifi-dhcpip.html</a></p>
+
+<p>Raspberry Piで複数Wifiで個別の固定IPを指定する方法<br>
+<a href="http://www.1ft-seabass.jp/memo/2015/03/23/raspberry-pi-wifi-multi-static-ip/">http://www.1ft-seabass.jp/memo/2015/03/23/raspberry-pi-wifi-multi-static-ip/</a></p>
+
+<p>Raspberry Piの設定【有線LAN（イーサネット）・無線LAN（WiFi）設定】<br>
+<a href="http://yamaryu0508.hatenablog.com/entry/2014/08/15/001312">http://yamaryu0508.hatenablog.com/entry/2014/08/15/001312</a></p>
 ]]></content>
   </entry>
   
