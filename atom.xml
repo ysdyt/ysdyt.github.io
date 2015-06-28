@@ -4,7 +4,7 @@
   <title><![CDATA[ysdyt.net for tech memo]]></title>
   <link href="http://ysdyt.github.io/atom.xml" rel="self"/>
   <link href="http://ysdyt.github.io/"/>
-  <updated>2015-06-28T22:04:20+09:00</updated>
+  <updated>2015-06-28T22:07:40+09:00</updated>
   <id>http://ysdyt.github.io/</id>
   <author>
     <name><![CDATA[Yuta Yoshida]]></name>
@@ -74,8 +74,8 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>% sudo bash  <span class="c"># bashでrootユーザにログイン</span>
-</span><span class='line'><span class="c"># chmod 660 /etc/wpa_suoplicant/wpa_supplicant.comf #権限の変更</span>
-</span><span class='line'><span class="c"># sudo wpa_passphrase &quot;接続先のSSID&quot; &quot;接続先のパスワード&quot; &gt;&gt; /etc/wpa_supplicant/wpa_supplicant.conf</span>
+</span><span class='line'>root% chmod <span class="m">660</span> /etc/wpa_suoplicant/wpa_supplicant.comf <span class="c">#権限の変更</span>
+</span><span class='line'>root% sudo wpa_passphrase <span class="s2">&quot;接続先のSSID&quot;</span> <span class="s2">&quot;接続先のパスワード&quot;</span> &gt;&gt; /etc/wpa_supplicant/wpa_supplicant.conf
 </span></code></pre></td></tr></table></div></figure>
 
 
